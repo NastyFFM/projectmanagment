@@ -26,33 +26,67 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  font-size: 13px;
+  font-size: 14px;
   height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* ── Layout ── */
+/* ── Layout (mobile-first) ── */
 .app-shell {
   display: flex;
   height: 100%;
   overflow: hidden;
+  position: relative;
 }
 
-/* ── Sidebar ── */
+/* ── Sidebar (mobile: drawer) ── */
 .sidebar {
-  width: 220px;
-  min-width: 220px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 80%;
+  max-width: 300px;
   background: var(--bg-card);
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  z-index: 200;
+  transform: translateX(-100%);
+  transition: transform 0.22s ease;
+  box-shadow: 4px 0 16px rgba(0,0,0,0.4);
+}
+.sidebar.open { transform: translateX(0); }
+
+.drawer-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 150;
+}
+.drawer-backdrop.open { display: block; }
+
+@media (min-width: 768px) {
+  .sidebar {
+    position: static;
+    transform: none;
+    width: 220px;
+    min-width: 220px;
+    max-width: none;
+    box-shadow: none;
+  }
+  .drawer-backdrop { display: none !important; }
+  .menu-btn { display: none !important; }
 }
 
 .sidebar-header {
-  padding: 14px 12px 10px;
+  padding: 16px 14px 12px;
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
@@ -72,18 +106,38 @@ body {
   background: none;
   border: 1px solid var(--border);
   color: var(--text-dim);
-  border-radius: 4px;
-  width: 22px;
-  height: 22px;
+  border-radius: 6px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 18px;
   transition: all 0.1s;
   flex-shrink: 0;
 }
-.btn-icon:hover { border-color: var(--teal); color: var(--teal); background: rgba(88,166,255,0.08); }
+.btn-icon:hover, .btn-icon:active { border-color: var(--teal); color: var(--teal); background: rgba(88,166,255,0.08); }
+
+@media (min-width: 768px) {
+  .btn-icon { width: 26px; height: 26px; font-size: 14px; }
+}
+
+.menu-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 6px;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 0;
+}
+.menu-btn svg { width: 20px; height: 20px; }
 
 .projects-list {
   flex: 1;
@@ -94,12 +148,13 @@ body {
 .project-item {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 7px 12px;
+  gap: 10px;
+  padding: 12px 14px;
   cursor: pointer;
   border-left: 2px solid transparent;
   transition: all 0.1s;
   user-select: none;
+  min-height: 44px;
 }
 .project-item:hover { background: var(--bg-card-hover); }
 .project-item.active {
@@ -127,18 +182,22 @@ body {
   border-radius: 9px;
 }
 .project-delete {
-  opacity: 0;
+  opacity: 0.5;
   background: none;
   border: none;
   color: var(--danger);
   cursor: pointer;
-  font-size: 12px;
-  padding: 2px 4px;
-  border-radius: 3px;
+  font-size: 16px;
+  padding: 6px 8px;
+  border-radius: 4px;
   line-height: 1;
 }
-.project-item:hover .project-delete { opacity: 0.6; }
-.project-item:hover .project-delete:hover { opacity: 1; background: rgba(248,81,73,0.1); }
+.project-item:hover .project-delete { opacity: 0.8; }
+.project-item:hover .project-delete:hover, .project-delete:active { opacity: 1; background: rgba(248,81,73,0.1); }
+@media (min-width: 768px) {
+  .project-delete { opacity: 0; font-size: 12px; padding: 2px 4px; }
+  .project-item:hover .project-delete { opacity: 0.6; }
+}
 
 /* ── Main content ── */
 .main {
@@ -150,38 +209,52 @@ body {
 
 /* ── Topbar ── */
 .topbar {
-  padding: 10px 16px;
+  padding: 10px 12px;
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   background: var(--bg-card);
-  min-height: 46px;
+  min-height: 56px;
+}
+@media (min-width: 768px) {
+  .topbar { padding: 10px 16px; gap: 12px; min-height: 46px; }
 }
 
 .project-heading {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
   flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@media (min-width: 768px) {
+  .project-heading { font-size: 15px; }
 }
 
 .tabs {
   display: flex;
   gap: 2px;
   background: var(--surface);
-  border-radius: 6px;
-  padding: 2px;
+  border-radius: 8px;
+  padding: 3px;
 }
 .tab {
-  padding: 4px 14px;
-  border-radius: 4px;
+  padding: 8px 14px;
+  border-radius: 6px;
   background: none;
   border: none;
   color: var(--text-dim);
   cursor: pointer;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
   transition: all 0.1s;
+  min-height: 36px;
+}
+@media (min-width: 768px) {
+  .tab { padding: 4px 14px; font-size: 12px; min-height: 0; border-radius: 4px; }
+  .tabs { padding: 2px; border-radius: 6px; }
 }
 .tab.active {
   background: var(--bg-card);
@@ -208,14 +281,33 @@ body {
   background: var(--accent);
   color: #fff;
   border: none;
-  border-radius: 6px;
-  padding: 7px 16px;
-  font-size: 13px;
+  border-radius: 8px;
+  padding: 11px 18px;
+  font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   transition: opacity 0.1s;
+  min-height: 40px;
 }
-.btn-primary:hover { opacity: 0.88; }
+.btn-primary:hover, .btn-primary:active { opacity: 0.88; }
+@media (min-width: 768px) {
+  .btn-primary { padding: 7px 16px; font-size: 13px; border-radius: 6px; min-height: 0; }
+}
+
+.btn-cancel {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-size: 14px;
+  cursor: pointer;
+  min-height: 40px;
+}
+.btn-cancel:hover, .btn-cancel:active { border-color: var(--text-dim); color: var(--text); }
+@media (min-width: 768px) {
+  .btn-cancel { padding: 6px 14px; font-size: 13px; border-radius: 5px; min-height: 0; }
+}
 
 /* ── Kanban ── */
 .kanban-view {
@@ -228,22 +320,32 @@ body {
 .kanban-board {
   flex: 1;
   display: flex;
-  gap: 12px;
-  padding: 14px 16px;
+  gap: 10px;
+  padding: 12px;
   overflow-x: auto;
+  overflow-y: hidden;
   align-items: flex-start;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+@media (min-width: 768px) {
+  .kanban-board { gap: 12px; padding: 14px 16px; scroll-snap-type: none; }
 }
 
 .kanban-col {
-  min-width: 220px;
-  width: 220px;
+  min-width: 84vw;
+  width: 84vw;
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 10px;
   display: flex;
   flex-direction: column;
   max-height: 100%;
   flex-shrink: 0;
+  scroll-snap-align: start;
+}
+@media (min-width: 768px) {
+  .kanban-col { min-width: 260px; width: 260px; border-radius: 8px; scroll-snap-align: none; }
 }
 .kanban-col.drag-over {
   border-color: var(--accent);
@@ -286,11 +388,14 @@ body {
 .kanban-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 9px 10px;
+  border-radius: 8px;
+  padding: 12px;
   cursor: grab;
   transition: all 0.1s;
   user-select: none;
+}
+@media (min-width: 768px) {
+  .kanban-card { border-radius: 6px; padding: 9px 10px; }
 }
 .kanban-card:hover {
   border-color: var(--accent);
@@ -332,7 +437,7 @@ body {
 .card-actions {
   display: flex;
   gap: 4px;
-  opacity: 0;
+  opacity: 0.6;
   transition: opacity 0.1s;
 }
 .kanban-card:hover .card-actions { opacity: 1; }
@@ -341,9 +446,15 @@ body {
   border: none;
   color: var(--text-dim);
   cursor: pointer;
-  padding: 2px 4px;
-  border-radius: 3px;
-  font-size: 11px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  min-width: 30px;
+  min-height: 30px;
+}
+@media (min-width: 768px) {
+  .card-actions { opacity: 0; }
+  .card-btn { padding: 2px 4px; font-size: 11px; min-width: 0; min-height: 0; }
 }
 .card-btn:hover { color: var(--text); background: var(--surface); }
 .card-btn.del:hover { color: var(--danger); }
@@ -370,15 +481,23 @@ body {
   flex: 1;
   display: flex;
   overflow: hidden;
+  position: relative;
 }
 
 .notes-sidebar {
-  width: 220px;
-  min-width: 220px;
+  width: 100%;
+  min-width: 0;
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+.notes-view.editing .notes-sidebar { display: none; }
+.notes-view.editing .notes-editor { display: flex !important; }
+
+@media (min-width: 768px) {
+  .notes-sidebar { width: 220px; min-width: 220px; }
+  .notes-view.editing .notes-sidebar { display: flex; }
 }
 .notes-sidebar-header {
   padding: 10px 12px 8px;
@@ -398,10 +517,14 @@ body {
   padding: 6px 0;
 }
 .note-item {
-  padding: 8px 12px;
+  padding: 12px 14px;
   cursor: pointer;
   border-left: 2px solid transparent;
   transition: all 0.1s;
+  min-height: 52px;
+}
+@media (min-width: 768px) {
+  .note-item { padding: 8px 12px; min-height: 0; }
 }
 .note-item:hover { background: var(--bg-card-hover); }
 .note-item.active { background: var(--bg-card-hover); border-left-color: var(--teal); }
@@ -428,16 +551,38 @@ body {
 
 .notes-editor {
   flex: 1;
-  display: flex;
+  display: none;
   flex-direction: column;
   overflow: hidden;
 }
+@media (min-width: 768px) {
+  .notes-editor { display: flex; }
+}
 .notes-editor-header {
-  padding: 10px 16px 8px;
+  padding: 10px 12px 8px;
   border-bottom: 1px solid var(--border);
   display: flex;
-  gap: 8px;
+  gap: 6px;
   align-items: center;
+}
+@media (min-width: 768px) {
+  .notes-editor-header { padding: 10px 16px 8px; gap: 8px; }
+  .note-back-btn { display: none; }
+}
+.note-back-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 18px;
+  padding: 0;
+  border-radius: 6px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 .note-title-input {
   flex: 1;
@@ -466,11 +611,14 @@ body {
   background: none;
   border: none;
   color: var(--text);
-  font-size: 13px;
+  font-size: 15px;
   font-family: inherit;
   line-height: 1.7;
   resize: none;
   outline: none;
+}
+@media (min-width: 768px) {
+  .note-content-area { font-size: 13px; }
 }
 .note-content-area::placeholder { color: var(--text-dim); }
 .note-status {
@@ -494,12 +642,17 @@ body {
 .modal {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 20px;
-  min-width: 320px;
+  min-width: 0;
   max-width: 400px;
-  width: 90%;
+  width: calc(100% - 24px);
   box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+}
+@media (min-width: 768px) {
+  .modal { width: 90%; }
 }
 .modal h3 { font-size: 15px; margin-bottom: 14px; }
 .form-group { margin-bottom: 12px; }
@@ -516,36 +669,32 @@ body {
   background: var(--surface);
   border: 1px solid var(--border);
   color: var(--text);
-  border-radius: 5px;
-  padding: 7px 10px;
-  font-size: 13px;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 16px;
   font-family: inherit;
   outline: none;
   transition: border-color 0.1s;
+}
+@media (min-width: 768px) {
+  .form-input, .form-select, .form-textarea { padding: 7px 10px; font-size: 13px; border-radius: 5px; }
 }
 .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--accent); }
 .form-textarea { resize: vertical; min-height: 70px; }
 .form-select option { background: var(--bg-card); }
 .color-row { display: flex; gap: 6px; flex-wrap: wrap; }
 .color-swatch {
-  width: 24px; height: 24px;
+  width: 32px; height: 32px;
   border-radius: 50%;
   cursor: pointer;
   border: 2px solid transparent;
   transition: border-color 0.1s;
 }
-.color-swatch.selected { border-color: #fff; }
-.modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
-.btn-cancel {
-  background: none;
-  border: 1px solid var(--border);
-  color: var(--text-dim);
-  border-radius: 5px;
-  padding: 6px 14px;
-  font-size: 13px;
-  cursor: pointer;
+@media (min-width: 768px) {
+  .color-swatch { width: 24px; height: 24px; }
 }
-.btn-cancel:hover { border-color: var(--text-dim); color: var(--text); }
+.color-swatch.selected { border-color: #fff; }
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; }
 
 /* ── Backup ── */
 .backup-bar {
@@ -580,8 +729,10 @@ body {
 <body>
 
 <div class="app-shell">
+  <div class="drawer-backdrop" id="drawerBackdrop" onclick="toggleDrawer(false)"></div>
+
   <!-- Sidebar: Projects -->
-  <div class="sidebar">
+  <div class="sidebar" id="sidebar">
     <div class="sidebar-header">
       <span class="sidebar-title">Projects</span>
       <button class="btn-icon" onclick="openNewProjectModal()" title="New Project">+</button>
@@ -592,6 +743,9 @@ body {
   <!-- Main -->
   <div class="main" id="mainArea">
     <div class="empty-state" id="emptyState">
+      <button class="menu-btn" style="position:absolute;top:12px;left:12px;" onclick="toggleDrawer(true)" aria-label="Menü">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
       <div class="icon">📋</div>
       <p>Kein Projekt ausgewählt.<br>Erstelle ein neues Projekt oder wähle eines aus.</p>
       <button class="btn-primary" onclick="openNewProjectModal()">+ Neues Projekt</button>
@@ -600,6 +754,9 @@ body {
     <!-- Project content (hidden until project selected) -->
     <div id="projectContent" style="display:none;flex:1;display:none;flex-direction:column;overflow:hidden;">
       <div class="topbar">
+        <button class="menu-btn" onclick="toggleDrawer(true)" aria-label="Menü">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
         <span class="project-heading" id="projectHeading">–</span>
         <div class="tabs">
           <button class="tab active" id="tabKanban" onclick="switchTab('kanban')">Kanban</button>
@@ -628,6 +785,7 @@ body {
           </div>
           <div id="notesEditorActive" style="display:none;flex-direction:column;flex:1;overflow:hidden;">
             <div class="notes-editor-header">
+              <button class="note-back-btn" onclick="closeNote()" aria-label="Zurück">‹</button>
               <input class="note-title-input" id="noteTitleInput" placeholder="Titel…" oninput="onNoteChange()">
               <button class="note-delete-btn" onclick="deleteNote()" title="Notiz löschen">🗑</button>
             </div>
@@ -907,11 +1065,28 @@ function showNoteEditor(note) {
   document.getElementById('noteTitleInput').value = note.title || '';
   document.getElementById('noteContentArea').value = note.content || '';
   document.getElementById('noteStatus').textContent = note.updated ? 'Gespeichert ' + new Date(note.updated).toLocaleString('de-DE') : '';
+  document.getElementById('viewNotes').classList.add('editing');
 }
 
 function hideNoteEditor() {
   document.getElementById('notesEmpty').style.display = 'flex';
   document.getElementById('notesEditorActive').style.display = 'none';
+  document.getElementById('viewNotes').classList.remove('editing');
+}
+
+function closeNote() {
+  activeNoteId = null;
+  hideNoteEditor();
+  const proj = activeProject();
+  if (proj) renderNotes(proj);
+}
+
+function toggleDrawer(open) {
+  const sidebar = document.getElementById('sidebar');
+  const backdrop = document.getElementById('drawerBackdrop');
+  const show = (open === undefined) ? !sidebar.classList.contains('open') : open;
+  sidebar.classList.toggle('open', show);
+  backdrop.classList.toggle('open', show);
 }
 
 // ── Actions ───────────────────────────────────────
@@ -920,6 +1095,7 @@ function selectProject(id) {
   activeNoteId = null;
   persist();
   render();
+  toggleDrawer(false);
 }
 
 function switchTab(tab) {
