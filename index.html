@@ -3,43 +3,1166 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Projectmanagment</title>
+<title>Project Management</title>
 <style>
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:-apple-system,BlinkMacSystemFont,sans-serif; background:#0d0d14; color:#e0e0e0; padding:20px; min-height:100vh; }
-h1 { font-size:20px; margin-bottom:8px; }
-p { color:#888; font-size:13px; margin-bottom:20px; }
-.card { background:#1a1a2e; border-radius:8px; padding:16px; margin-bottom:12px; border:1px solid #2a2a3e; }
-button { background:#4ecdc4; color:#0d0d14; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-weight:600; }
-button:hover { opacity:0.9; }
-input, textarea { width:100%; padding:8px; background:#13131f; border:1px solid #2a2a3e; border-radius:6px; color:#e0e0e0; font-size:13px; margin-bottom:8px; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0d1117;
+  --bg-card: #161b22;
+  --bg-card-hover: #1c2128;
+  --text: #c9d1d9;
+  --text-dim: #8b949e;
+  --border: #30363d;
+  --teal: #58a6ff;
+  --accent: #3b82f6;
+  --surface: #21262d;
+  --success: #3fb950;
+  --warning: #d29922;
+  --danger: #f85149;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-size: 13px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── Layout ── */
+.app-shell {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ── Sidebar ── */
+.sidebar {
+  width: 220px;
+  min-width: 220px;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sidebar-header {
+  padding: 14px 12px 10px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.sidebar-title {
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-icon {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  border-radius: 4px;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.1s;
+  flex-shrink: 0;
+}
+.btn-icon:hover { border-color: var(--teal); color: var(--teal); background: rgba(88,166,255,0.08); }
+
+.projects-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+.project-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: all 0.1s;
+  user-select: none;
+}
+.project-item:hover { background: var(--bg-card-hover); }
+.project-item.active {
+  background: var(--bg-card-hover);
+  border-left-color: var(--accent);
+}
+.project-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.project-name {
+  flex: 1;
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.project-count {
+  font-size: 10px;
+  color: var(--text-dim);
+  background: var(--surface);
+  padding: 1px 5px;
+  border-radius: 9px;
+}
+.project-delete {
+  opacity: 0;
+  background: none;
+  border: none;
+  color: var(--danger);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 2px 4px;
+  border-radius: 3px;
+  line-height: 1;
+}
+.project-item:hover .project-delete { opacity: 0.6; }
+.project-item:hover .project-delete:hover { opacity: 1; background: rgba(248,81,73,0.1); }
+
+/* ── Main content ── */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── Topbar ── */
+.topbar {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-card);
+  min-height: 46px;
+}
+
+.project-heading {
+  font-size: 15px;
+  font-weight: 600;
+  flex: 1;
+}
+
+.tabs {
+  display: flex;
+  gap: 2px;
+  background: var(--surface);
+  border-radius: 6px;
+  padding: 2px;
+}
+.tab {
+  padding: 4px 14px;
+  border-radius: 4px;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.1s;
+}
+.tab.active {
+  background: var(--bg-card);
+  color: var(--text);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+.tab:hover:not(.active) { color: var(--text); }
+
+/* ── Empty state ── */
+.empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--text-dim);
+  padding: 40px;
+  text-align: center;
+}
+.empty-state .icon { font-size: 48px; opacity: 0.4; }
+.empty-state p { font-size: 13px; max-width: 240px; line-height: 1.5; }
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 7px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.1s;
+}
+.btn-primary:hover { opacity: 0.88; }
+
+/* ── Kanban ── */
+.kanban-view {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.kanban-board {
+  flex: 1;
+  display: flex;
+  gap: 12px;
+  padding: 14px 16px;
+  overflow-x: auto;
+  align-items: flex-start;
+}
+
+.kanban-col {
+  min-width: 220px;
+  width: 220px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+  flex-shrink: 0;
+}
+.kanban-col.drag-over {
+  border-color: var(--accent);
+  background: rgba(59,130,246,0.05);
+}
+
+.col-header {
+  padding: 10px 12px 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.col-title {
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex: 1;
+}
+.col-count {
+  font-size: 11px;
+  color: var(--text-dim);
+  background: var(--surface);
+  padding: 1px 6px;
+  border-radius: 9px;
+}
+
+.col-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 48px;
+}
+
+.kanban-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 9px 10px;
+  cursor: grab;
+  transition: all 0.1s;
+  user-select: none;
+}
+.kanban-card:hover {
+  border-color: var(--accent);
+  background: var(--bg-card-hover);
+}
+.kanban-card.dragging {
+  opacity: 0.4;
+  cursor: grabbing;
+}
+.card-title {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+.card-desc {
+  font-size: 11px;
+  color: var(--text-dim);
+  line-height: 1.4;
+}
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 7px;
+  gap: 6px;
+}
+.card-priority {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 9px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.priority-high { background: rgba(248,81,73,0.15); color: #f85149; }
+.priority-medium { background: rgba(210,153,34,0.15); color: #d29922; }
+.priority-low { background: rgba(63,185,80,0.15); color: #3fb950; }
+.card-actions {
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.1s;
+}
+.kanban-card:hover .card-actions { opacity: 1; }
+.card-btn {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-size: 11px;
+}
+.card-btn:hover { color: var(--text); background: var(--surface); }
+.card-btn.del:hover { color: var(--danger); }
+
+.add-card-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  background: none;
+  border: 1px dashed var(--border);
+  color: var(--text-dim);
+  padding: 7px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  margin-top: 2px;
+  transition: all 0.1s;
+}
+.add-card-btn:hover { border-color: var(--accent); color: var(--teal); }
+
+/* ── Notes ── */
+.notes-view {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.notes-sidebar {
+  width: 220px;
+  min-width: 220px;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.notes-sidebar-header {
+  padding: 10px 12px 8px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.notes-sidebar-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-dim);
+}
+.notes-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 6px 0;
+}
+.note-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: all 0.1s;
+}
+.note-item:hover { background: var(--bg-card-hover); }
+.note-item.active { background: var(--bg-card-hover); border-left-color: var(--teal); }
+.note-item-title {
+  font-size: 13px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.note-item-preview {
+  font-size: 11px;
+  color: var(--text-dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+.note-item-date {
+  font-size: 10px;
+  color: var(--text-dim);
+  margin-top: 3px;
+}
+
+.notes-editor {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.notes-editor-header {
+  padding: 10px 16px 8px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.note-title-input {
+  flex: 1;
+  background: none;
+  border: none;
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 600;
+  outline: none;
+}
+.note-title-input::placeholder { color: var(--text-dim); }
+.note-delete-btn {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 13px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.1s;
+}
+.note-delete-btn:hover { color: var(--danger); background: rgba(248,81,73,0.1); }
+.note-content-area {
+  flex: 1;
+  padding: 14px 16px;
+  background: none;
+  border: none;
+  color: var(--text);
+  font-size: 13px;
+  font-family: inherit;
+  line-height: 1.7;
+  resize: none;
+  outline: none;
+}
+.note-content-area::placeholder { color: var(--text-dim); }
+.note-status {
+  font-size: 11px;
+  color: var(--text-dim);
+  padding: 4px 16px 8px;
+  text-align: right;
+}
+
+/* ── Modals ── */
+.modal-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+.modal-backdrop.open { display: flex; }
+.modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  min-width: 320px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+.modal h3 { font-size: 15px; margin-bottom: 14px; }
+.form-group { margin-bottom: 12px; }
+.form-group label {
+  display: block;
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.form-input, .form-select, .form-textarea {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 5px;
+  padding: 7px 10px;
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.1s;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--accent); }
+.form-textarea { resize: vertical; min-height: 70px; }
+.form-select option { background: var(--bg-card); }
+.color-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.color-swatch {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 0.1s;
+}
+.color-swatch.selected { border-color: #fff; }
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+.btn-cancel {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  border-radius: 5px;
+  padding: 6px 14px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.btn-cancel:hover { border-color: var(--text-dim); color: var(--text); }
+
+/* ── Backup ── */
+.backup-bar {
+  position: fixed;
+  bottom: 8px;
+  right: 8px;
+  display: flex;
+  gap: 4px;
+  opacity: 0.4;
+  z-index: 100;
+  transition: opacity 0.2s;
+}
+.backup-bar:hover { opacity: 0.9; }
+.backup-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  padding: 3px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 10px;
+}
+.backup-btn:hover { color: var(--text); border-color: var(--text-dim); }
+
+/* ── Scrollbars ── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
 </style>
 </head>
 <body>
-<h1>Projectmanagment</h1>
-<p>Projectmanagament app mit kanban board und notizen</p>
-<div class="card">
-  <p>Diese App wurde mit dem PulseOS App-Builder erstellt.</p>
-  <p style="margin-top:8px;">Bearbeite <code>apps/projectmanagment/index.html</code> um sie anzupassen.</p>
-</div>
-<script>
-// PulseOS SDK (automatisch verfuegbar):
-// PulseOS.saveState(data)     - Zustand speichern (PUT /app/projectmanagment/api/state)
-// PulseOS.loadState()         - Zustand laden (GET /app/projectmanagment/api/state)
-// PulseOS.emit(name, data)    - Output an Graph senden
-// PulseOS.onInput(name, cb)   - Input von Graph empfangen
-// PulseOS.onDataChanged(cb)   - Reagiere auf externe Datenänderungen
-// PulseOS.alert(msg)          - Zeige Alert in Agent-Bar
 
-// Graph-Integration: Empfange Daten von anderen Apps
-if (window.PulseOS) {
-  PulseOS.onInput('data', function(incoming) {
-    console.log('Received graph input:', incoming);
-  });
-  PulseOS.onDataChanged(function() {
-    console.log('Data changed externally, reloading...');
+<div class="app-shell">
+  <!-- Sidebar: Projects -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <span class="sidebar-title">Projects</span>
+      <button class="btn-icon" onclick="openNewProjectModal()" title="New Project">+</button>
+    </div>
+    <div class="projects-list" id="projectsList"></div>
+  </div>
+
+  <!-- Main -->
+  <div class="main" id="mainArea">
+    <div class="empty-state" id="emptyState">
+      <div class="icon">📋</div>
+      <p>Kein Projekt ausgewählt.<br>Erstelle ein neues Projekt oder wähle eines aus.</p>
+      <button class="btn-primary" onclick="openNewProjectModal()">+ Neues Projekt</button>
+    </div>
+
+    <!-- Project content (hidden until project selected) -->
+    <div id="projectContent" style="display:none;flex:1;display:none;flex-direction:column;overflow:hidden;">
+      <div class="topbar">
+        <span class="project-heading" id="projectHeading">–</span>
+        <div class="tabs">
+          <button class="tab active" id="tabKanban" onclick="switchTab('kanban')">Kanban</button>
+          <button class="tab" id="tabNotes" onclick="switchTab('notes')">Notizen</button>
+        </div>
+      </div>
+
+      <!-- Kanban -->
+      <div class="kanban-view" id="viewKanban">
+        <div class="kanban-board" id="kanbanBoard"></div>
+      </div>
+
+      <!-- Notes -->
+      <div class="notes-view" id="viewNotes" style="display:none;">
+        <div class="notes-sidebar">
+          <div class="notes-sidebar-header">
+            <span class="notes-sidebar-title">Notizen</span>
+            <button class="btn-icon" onclick="newNote()" title="Neue Notiz">+</button>
+          </div>
+          <div class="notes-list" id="notesList"></div>
+        </div>
+        <div class="notes-editor" id="notesEditor">
+          <div class="empty-state" id="notesEmpty">
+            <div class="icon">📝</div>
+            <p>Wähle eine Notiz oder erstelle eine neue.</p>
+          </div>
+          <div id="notesEditorActive" style="display:none;flex-direction:column;flex:1;overflow:hidden;">
+            <div class="notes-editor-header">
+              <input class="note-title-input" id="noteTitleInput" placeholder="Titel…" oninput="onNoteChange()">
+              <button class="note-delete-btn" onclick="deleteNote()" title="Notiz löschen">🗑</button>
+            </div>
+            <textarea class="note-content-area" id="noteContentArea" placeholder="Schreibe hier…" oninput="onNoteChange()"></textarea>
+            <div class="note-status" id="noteStatus"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- New Project Modal -->
+<div class="modal-backdrop" id="newProjectModal">
+  <div class="modal">
+    <h3>Neues Projekt</h3>
+    <div class="form-group">
+      <label>Name</label>
+      <input class="form-input" id="newProjectName" placeholder="Projektname…" onkeydown="if(event.key==='Enter')createProject()">
+    </div>
+    <div class="form-group">
+      <label>Farbe</label>
+      <div class="color-row" id="colorRow"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('newProjectModal')">Abbrechen</button>
+      <button class="btn-primary" onclick="createProject()">Erstellen</button>
+    </div>
+  </div>
+</div>
+
+<!-- New Card Modal -->
+<div class="modal-backdrop" id="newCardModal">
+  <div class="modal">
+    <h3>Neuer Task</h3>
+    <div class="form-group">
+      <label>Titel</label>
+      <input class="form-input" id="newCardTitle" placeholder="Task-Titel…" onkeydown="if(event.key==='Enter')createCard()">
+    </div>
+    <div class="form-group">
+      <label>Beschreibung</label>
+      <textarea class="form-textarea" id="newCardDesc" placeholder="Optional…"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Priorität</label>
+      <select class="form-select" id="newCardPriority">
+        <option value="low">Niedrig</option>
+        <option value="medium" selected>Mittel</option>
+        <option value="high">Hoch</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Spalte</label>
+      <select class="form-select" id="newCardColumn"></select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('newCardModal')">Abbrechen</button>
+      <button class="btn-primary" onclick="createCard()">Erstellen</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Card Modal -->
+<div class="modal-backdrop" id="editCardModal">
+  <div class="modal">
+    <h3>Task bearbeiten</h3>
+    <div class="form-group">
+      <label>Titel</label>
+      <input class="form-input" id="editCardTitle" onkeydown="if(event.key==='Enter')saveEditCard()">
+    </div>
+    <div class="form-group">
+      <label>Beschreibung</label>
+      <textarea class="form-textarea" id="editCardDesc"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Priorität</label>
+      <select class="form-select" id="editCardPriority">
+        <option value="low">Niedrig</option>
+        <option value="medium">Mittel</option>
+        <option value="high">Hoch</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Spalte</label>
+      <select class="form-select" id="editCardColumn"></select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('editCardModal')">Abbrechen</button>
+      <button class="btn-primary" onclick="saveEditCard()">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<div class="backup-bar">
+  <button class="backup-btn" onclick="downloadBackup()">Export</button>
+  <button class="backup-btn" onclick="uploadBackup()">Import</button>
+</div>
+
+<script src="/sdk.js" onerror="void 0"></script>
+<script>
+if (!window.PulseOS) {
+  window.PulseOS = {
+    onInput: function(){}, emit: function(){}, onDataChanged: function(){},
+    saveState: function(){}, loadState: function(){ return Promise.resolve({}); },
+    alert: function(m){ console.log('[PulseOS]', m); }
+  };
+}
+const APP_ID = 'projectmanagment';
+const STORAGE_KEY = 'pulseos-app-' + APP_ID;
+const PROJECT_COLORS = ['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899','#06b6d4','#84cc16','#f97316','#64748b'];
+
+let state = { projects: [], activeProject: null };
+let currentTab = 'kanban';
+let activeNoteId = null;
+let noteAutoSaveTimer = null;
+let newCardTargetColumn = null;
+let editingCardId = null;
+let selectedColor = PROJECT_COLORS[0];
+let draggedCardId = null;
+let draggedCardProject = null;
+
+// ── Data ──────────────────────────────────────────
+async function saveData(data) {
+  try {
+    const r = await fetch('/app/' + APP_ID + '/api/state', {
+      method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data)
+    });
+    if (r.ok) {
+      try { await fetch('/api/notify-change', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({appId: APP_ID, file:'state.json'}) }); } catch {}
+      return;
+    }
+  } catch {}
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+async function loadData() {
+  try {
+    const r = await fetch('/app/' + APP_ID + '/api/state');
+    if (r.ok) return await r.json();
+  } catch {}
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || { projects: [], activeProject: null }; } catch {}
+  return { projects: [], activeProject: null };
+}
+
+function uid() { return 'id' + Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+
+function getProject(id) { return state.projects.find(p => p.id === id); }
+
+function activeProject() { return getProject(state.activeProject); }
+
+// ── Render ────────────────────────────────────────
+function render() {
+  renderSidebar();
+  const proj = activeProject();
+  if (!proj) {
+    document.getElementById('emptyState').style.display = 'flex';
+    document.getElementById('projectContent').style.display = 'none';
+    return;
+  }
+  document.getElementById('emptyState').style.display = 'none';
+  const pc = document.getElementById('projectContent');
+  pc.style.display = 'flex';
+
+  document.getElementById('projectHeading').textContent = proj.name;
+  if (currentTab === 'kanban') renderKanban(proj);
+  else renderNotes(proj);
+}
+
+function renderSidebar() {
+  const list = document.getElementById('projectsList');
+  list.innerHTML = '';
+  state.projects.forEach(proj => {
+    const total = proj.kanban.cards.length;
+    const item = document.createElement('div');
+    item.className = 'project-item' + (proj.id === state.activeProject ? ' active' : '');
+    item.onclick = () => selectProject(proj.id);
+    item.innerHTML = `
+      <div class="project-dot" style="background:${proj.color}"></div>
+      <span class="project-name">${escHtml(proj.name)}</span>
+      <span class="project-count">${total}</span>
+      <button class="project-delete" onclick="deleteProject('${proj.id}',event)" title="Löschen">✕</button>
+    `;
+    list.appendChild(item);
   });
 }
+
+function renderKanban(proj) {
+  const board = document.getElementById('kanbanBoard');
+  board.innerHTML = '';
+  proj.kanban.columns.forEach(col => {
+    const cards = proj.kanban.cards.filter(c => c.column === col);
+    const colEl = document.createElement('div');
+    colEl.className = 'kanban-col';
+    colEl.dataset.col = col;
+    colEl.addEventListener('dragover', e => { e.preventDefault(); colEl.classList.add('drag-over'); });
+    colEl.addEventListener('dragleave', () => colEl.classList.remove('drag-over'));
+    colEl.addEventListener('drop', e => { e.preventDefault(); colEl.classList.remove('drag-over'); dropCard(col); });
+
+    colEl.innerHTML = `
+      <div class="col-header">
+        <span class="col-title">${escHtml(col)}</span>
+        <span class="col-count">${cards.length}</span>
+      </div>
+      <div class="col-body" id="col-${colId(col)}"></div>
+      <div style="padding:8px 8px 10px;">
+        <button class="add-card-btn" onclick="openNewCardModal('${escHtml(col)}')">+ Task hinzufügen</button>
+      </div>
+    `;
+    board.appendChild(colEl);
+    const body = document.getElementById('col-' + colId(col));
+    cards.forEach(card => body.appendChild(makeCardEl(card)));
+  });
+}
+
+function colId(name) { return name.replace(/[^a-z0-9]/gi,'_').toLowerCase(); }
+
+function makeCardEl(card) {
+  const el = document.createElement('div');
+  el.className = 'kanban-card';
+  el.draggable = true;
+  el.dataset.id = card.id;
+  el.addEventListener('dragstart', () => { draggedCardId = card.id; el.classList.add('dragging'); });
+  el.addEventListener('dragend', () => { el.classList.remove('dragging'); draggedCardId = null; });
+  el.innerHTML = `
+    <div class="card-title">${escHtml(card.title)}</div>
+    ${card.desc ? `<div class="card-desc">${escHtml(card.desc)}</div>` : ''}
+    <div class="card-footer">
+      <span class="card-priority priority-${card.priority}">${card.priority}</span>
+      <div class="card-actions">
+        <button class="card-btn" onclick="openEditCardModal('${card.id}')" title="Bearbeiten">✎</button>
+        <button class="card-btn del" onclick="deleteCard('${card.id}')" title="Löschen">✕</button>
+      </div>
+    </div>
+  `;
+  return el;
+}
+
+function dropCard(targetCol) {
+  if (!draggedCardId) return;
+  const proj = activeProject();
+  const card = proj.kanban.cards.find(c => c.id === draggedCardId);
+  if (card && card.column !== targetCol) {
+    card.column = targetCol;
+    persist();
+    renderKanban(proj);
+  }
+}
+
+function renderNotes(proj) {
+  const list = document.getElementById('notesList');
+  list.innerHTML = '';
+  (proj.notes || []).forEach(note => {
+    const item = document.createElement('div');
+    item.className = 'note-item' + (note.id === activeNoteId ? ' active' : '');
+    item.onclick = () => selectNote(note.id);
+    const d = note.updated ? new Date(note.updated).toLocaleDateString('de-DE') : '';
+    item.innerHTML = `
+      <div class="note-item-title">${escHtml(note.title || 'Ohne Titel')}</div>
+      <div class="note-item-preview">${escHtml((note.content || '').split('\n')[0] || '…')}</div>
+      <div class="note-item-date">${d}</div>
+    `;
+    list.appendChild(item);
+  });
+
+  if (activeNoteId) {
+    const note = (proj.notes || []).find(n => n.id === activeNoteId);
+    if (note) showNoteEditor(note); else hideNoteEditor();
+  } else {
+    hideNoteEditor();
+  }
+}
+
+function showNoteEditor(note) {
+  document.getElementById('notesEmpty').style.display = 'none';
+  const ed = document.getElementById('notesEditorActive');
+  ed.style.display = 'flex';
+  document.getElementById('noteTitleInput').value = note.title || '';
+  document.getElementById('noteContentArea').value = note.content || '';
+  document.getElementById('noteStatus').textContent = note.updated ? 'Gespeichert ' + new Date(note.updated).toLocaleString('de-DE') : '';
+}
+
+function hideNoteEditor() {
+  document.getElementById('notesEmpty').style.display = 'flex';
+  document.getElementById('notesEditorActive').style.display = 'none';
+}
+
+// ── Actions ───────────────────────────────────────
+function selectProject(id) {
+  state.activeProject = id;
+  activeNoteId = null;
+  persist();
+  render();
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.getElementById('tabKanban').classList.toggle('active', tab === 'kanban');
+  document.getElementById('tabNotes').classList.toggle('active', tab === 'notes');
+  document.getElementById('viewKanban').style.display = tab === 'kanban' ? 'flex' : 'none';
+  document.getElementById('viewNotes').style.display = tab === 'notes' ? 'flex' : 'none';
+  const proj = activeProject();
+  if (proj) { if (tab === 'kanban') renderKanban(proj); else renderNotes(proj); }
+}
+
+// ── Projects ──────────────────────────────────────
+function openNewProjectModal() {
+  selectedColor = PROJECT_COLORS[0];
+  document.getElementById('newProjectName').value = '';
+  buildColorRow();
+  openModal('newProjectModal');
+  setTimeout(() => document.getElementById('newProjectName').focus(), 50);
+}
+
+function buildColorRow() {
+  const row = document.getElementById('colorRow');
+  row.innerHTML = '';
+  PROJECT_COLORS.forEach(c => {
+    const sw = document.createElement('div');
+    sw.className = 'color-swatch' + (c === selectedColor ? ' selected' : '');
+    sw.style.background = c;
+    sw.onclick = () => { selectedColor = c; buildColorRow(); };
+    row.appendChild(sw);
+  });
+}
+
+function createProject() {
+  const name = document.getElementById('newProjectName').value.trim();
+  if (!name) return;
+  const proj = {
+    id: uid(), name, color: selectedColor,
+    created: new Date().toISOString(),
+    kanban: { columns: ['Backlog', 'In Progress', 'Review', 'Done'], cards: [] },
+    notes: []
+  };
+  state.projects.push(proj);
+  state.activeProject = proj.id;
+  persist();
+  closeModal('newProjectModal');
+  render();
+}
+
+function deleteProject(id, e) {
+  e.stopPropagation();
+  if (!confirm('Projekt löschen?')) return;
+  state.projects = state.projects.filter(p => p.id !== id);
+  if (state.activeProject === id) state.activeProject = state.projects[0]?.id || null;
+  persist();
+  render();
+}
+
+// ── Cards ─────────────────────────────────────────
+function openNewCardModal(col) {
+  newCardTargetColumn = col;
+  const proj = activeProject();
+  document.getElementById('newCardTitle').value = '';
+  document.getElementById('newCardDesc').value = '';
+  document.getElementById('newCardPriority').value = 'medium';
+  const colSel = document.getElementById('newCardColumn');
+  colSel.innerHTML = proj.kanban.columns.map(c => `<option${c===col?' selected':''}>${escHtml(c)}</option>`).join('');
+  openModal('newCardModal');
+  setTimeout(() => document.getElementById('newCardTitle').focus(), 50);
+}
+
+function createCard() {
+  const title = document.getElementById('newCardTitle').value.trim();
+  if (!title) return;
+  const proj = activeProject();
+  const card = {
+    id: uid(), title,
+    desc: document.getElementById('newCardDesc').value.trim(),
+    column: document.getElementById('newCardColumn').value,
+    priority: document.getElementById('newCardPriority').value,
+    created: new Date().toISOString()
+  };
+  proj.kanban.cards.push(card);
+  persist();
+  closeModal('newCardModal');
+  renderKanban(proj);
+  renderSidebar();
+  PulseOS.emit('tasks', proj.kanban.cards);
+}
+
+function openEditCardModal(cardId) {
+  const proj = activeProject();
+  const card = proj.kanban.cards.find(c => c.id === cardId);
+  if (!card) return;
+  editingCardId = cardId;
+  document.getElementById('editCardTitle').value = card.title;
+  document.getElementById('editCardDesc').value = card.desc || '';
+  document.getElementById('editCardPriority').value = card.priority || 'medium';
+  const colSel = document.getElementById('editCardColumn');
+  colSel.innerHTML = proj.kanban.columns.map(c => `<option${c===card.column?' selected':''}>${escHtml(c)}</option>`).join('');
+  openModal('editCardModal');
+  setTimeout(() => document.getElementById('editCardTitle').focus(), 50);
+}
+
+function saveEditCard() {
+  const title = document.getElementById('editCardTitle').value.trim();
+  if (!title) return;
+  const proj = activeProject();
+  const card = proj.kanban.cards.find(c => c.id === editingCardId);
+  if (!card) return;
+  card.title = title;
+  card.desc = document.getElementById('editCardDesc').value.trim();
+  card.priority = document.getElementById('editCardPriority').value;
+  card.column = document.getElementById('editCardColumn').value;
+  persist();
+  closeModal('editCardModal');
+  renderKanban(proj);
+}
+
+function deleteCard(cardId) {
+  const proj = activeProject();
+  proj.kanban.cards = proj.kanban.cards.filter(c => c.id !== cardId);
+  persist();
+  renderKanban(proj);
+  renderSidebar();
+}
+
+// ── Notes ─────────────────────────────────────────
+function newNote() {
+  const proj = activeProject();
+  if (!proj) return;
+  const note = { id: uid(), title: 'Neue Notiz', content: '', updated: new Date().toISOString() };
+  if (!proj.notes) proj.notes = [];
+  proj.notes.unshift(note);
+  activeNoteId = note.id;
+  persist();
+  renderNotes(proj);
+}
+
+function selectNote(id) {
+  activeNoteId = id;
+  const proj = activeProject();
+  renderNotes(proj);
+}
+
+function onNoteChange() {
+  clearTimeout(noteAutoSaveTimer);
+  noteAutoSaveTimer = setTimeout(saveActiveNote, 800);
+  document.getElementById('noteStatus').textContent = 'Speichern…';
+}
+
+function saveActiveNote() {
+  if (!activeNoteId) return;
+  const proj = activeProject();
+  const note = (proj.notes || []).find(n => n.id === activeNoteId);
+  if (!note) return;
+  note.title = document.getElementById('noteTitleInput').value;
+  note.content = document.getElementById('noteContentArea').value;
+  note.updated = new Date().toISOString();
+  document.getElementById('noteStatus').textContent = 'Gespeichert ' + new Date().toLocaleString('de-DE');
+  persist();
+  renderNotes(proj);
+}
+
+function deleteNote() {
+  if (!activeNoteId) return;
+  if (!confirm('Notiz löschen?')) return;
+  const proj = activeProject();
+  proj.notes = (proj.notes || []).filter(n => n.id !== activeNoteId);
+  activeNoteId = null;
+  persist();
+  renderNotes(proj);
+}
+
+// ── Persist ───────────────────────────────────────
+function persist() { saveData(state); }
+
+// ── Modal helpers ─────────────────────────────────
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-backdrop').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) closeModal(m.id); });
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.querySelectorAll('.modal-backdrop.open').forEach(m => closeModal(m.id));
+});
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Backup ────────────────────────────────────────
+function downloadBackup() {
+  const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = APP_ID + '-backup-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+}
+function uploadBackup() {
+  const input = document.createElement('input'); input.type='file'; input.accept='.json';
+  input.onchange = () => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      try { state = JSON.parse(reader.result); persist(); render(); } catch { alert('Ungültige Backup-Datei'); }
+    };
+    reader.readAsText(input.files[0]);
+  };
+  input.click();
+}
+
+// ── PulseOS SDK ───────────────────────────────────
+PulseOS.onInput('task', function(data) {
+  const proj = data.project ? getProject(data.project) : activeProject();
+  if (!proj || !data.title) return;
+  const card = {
+    id: uid(), title: data.title,
+    desc: data.desc || '', column: data.column || proj.kanban.columns[0],
+    priority: data.priority || 'medium', created: new Date().toISOString()
+  };
+  proj.kanban.cards.push(card);
+  persist(); render();
+});
+
+PulseOS.onInput('note', function(data) {
+  const proj = data.project ? getProject(data.project) : activeProject();
+  if (!proj || !data.title) return;
+  if (!proj.notes) proj.notes = [];
+  proj.notes.unshift({ id: uid(), title: data.title, content: data.content || '', updated: new Date().toISOString() });
+  persist(); render();
+});
+
+PulseOS.onDataChanged(function() { init(); });
+
+// ── Init ──────────────────────────────────────────
+async function init() {
+  state = await loadData();
+  if (!state.projects) state.projects = [];
+  render();
+  const proj = activeProject();
+  if (proj) PulseOS.emit('projects', state.projects.map(p => ({ id:p.id, name:p.name, taskCount:p.kanban.cards.length })));
+}
+
+init();
 </script>
 </body>
 </html>

@@ -1,22 +1,21 @@
 {
-  "name": "Projectmanagment",
-  "icon": "P",
-  "color": "#1a2a3a",
-  "description": "Projectmanagament app mit kanban board und notizen",
+  "name": "Project Management",
+  "icon": "📋",
+  "color": "#1e293b",
+  "description": "Projektmanagement mit Kanban-Board und Notizen",
   "inputs": [
-    {
-      "id": "data",
-      "desc": "Beliebige Daten empfangen"
-    }
+    { "id": "task", "desc": "Task hinzufügen: { project, title, desc, column }" },
+    { "id": "note", "desc": "Notiz hinzufügen: { project, title, content }" }
   ],
   "outputs": [
-    {
-      "id": "state",
-      "desc": "Aktueller App-Zustand"
-    }
+    { "id": "tasks", "desc": "Alle Tasks des aktiven Projekts" },
+    { "id": "projects", "desc": "Alle Projekte (id, name, taskCount)" }
   ],
-  "dataFiles": [
-    "state"
-  ],
-  "pulseSubscriptions": []
+  "dataFiles": ["state"],
+  "pulseSubscriptions": [],
+  "skills": [
+    { "id": "add-task", "name": "Task erstellen", "description": "Erstellt einen neuen Task im Kanban-Board", "action": "write", "dataFile": "state" },
+    { "id": "list-tasks", "name": "Tasks auflisten", "description": "Listet alle Tasks eines Projekts", "action": "read", "dataFile": "state" },
+    { "id": "add-project-note", "name": "Projektnotiz erstellen", "description": "Erstellt eine Notiz für ein Projekt", "action": "write", "dataFile": "state" }
+  ]
 }

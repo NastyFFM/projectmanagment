@@ -1,1 +1,53 @@
-{}
+{
+  "projects": [
+    {
+      "id": "p1",
+      "name": "PulseOS Development",
+      "color": "#3b82f6",
+      "created": "2026-04-17T10:00:00.000Z",
+      "kanban": {
+        "columns": [
+          "Backlog",
+          "In Progress",
+          "Review",
+          "Done"
+        ],
+        "cards": [
+          {
+            "id": "c1",
+            "title": "Setup project structure",
+            "desc": "Create initial folders and files",
+            "column": "Done",
+            "priority": "high",
+            "created": "2026-04-17T10:00:00.000Z"
+          },
+          {
+            "id": "c2",
+            "title": "Build kanban board",
+            "desc": "Drag & drop cards between columns",
+            "column": "In Progress",
+            "priority": "high",
+            "created": "2026-04-17T10:01:00.000Z"
+          },
+          {
+            "id": "c3",
+            "title": "Add notes feature",
+            "desc": "Per-project notes with markdown",
+            "column": "Backlog",
+            "priority": "medium",
+            "created": "2026-04-17T10:02:00.000Z"
+          }
+        ]
+      },
+      "notes": [
+        {
+          "id": "n1",
+          "title": "Project Overview",
+          "content": "PulseOS is a browser-based OS built with vanilla HTML/CSS/JS.",
+          "updated": "2026-04-17T10:00:00.000Z"
+        }
+      ]
+    }
+  ],
+  "activeProject": "p1"
+}
