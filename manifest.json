@@ -1,0 +1,22 @@
+{
+  "name": "Projectmanagment",
+  "icon": "P",
+  "color": "#1a2a3a",
+  "description": "Projectmanagament app mit kanban board und notizen",
+  "inputs": [
+    {
+      "id": "data",
+      "desc": "Beliebige Daten empfangen"
+    }
+  ],
+  "outputs": [
+    {
+      "id": "state",
+      "desc": "Aktueller App-Zustand"
+    }
+  ],
+  "dataFiles": [
+    "state"
+  ],
+  "pulseSubscriptions": []
+}
